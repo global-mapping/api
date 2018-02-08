@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
-const {getTimeSheets, insertTimeSheet} = require('./controller/timeSheet')
+const {getTimeSheets, saveTimeSheets} = require('./controller/timeSheet')
 
 const app = express()
 
@@ -30,8 +30,7 @@ app.use(cors({
 
 // routes
 app.get('/list', getTimeSheets)
-app.post('/insert', insertTimeSheet)
-
+app.post('/save', saveTimeSheets)
 
 // server
 if (!module.parent) {

@@ -6,11 +6,7 @@ const TimeSheetSchema = new Schema(
   {
     email: { type: String },
     message: { type: String },
-    submitted: { type: Boolean, default: false },
-    day: { type: Number },
-    month: { type: Number },
-    year: { type: Number },
-    week: { type: Number },
+    dayKey: { type: String },
   },
   { timestamps: true },
 )

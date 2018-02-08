@@ -13,18 +13,23 @@ const getTimeSheets = (req, res, next) => {
 
 exports.getTimeSheets = getTimeSheets
 
-const insertTimeSheet = (req, res, next) => {
-  const {email, message, submitted, day, month, year} = req.body
-  console.log(email, message, submitted, day, month, year)
-  TimeSheet.create({email, message, submitted, day, month, year})
-    .then((model) => {
-      console.log(model)
-      return res.status(200).json({result: 'done'})
+const saveTimeSheets = (req, res, next) => {
+  const timeSheets = req.body
+  const token = req.get('token')
+
+  const promises = Object.keys(timeSheets).map((dayKey) => {
+    return TimeSheet.create({
+      email: '',
+      message: timeSheets[dayKey],
+      dayKey
     })
-    .catch(error => {
-      console.error(error)
-      return res.status(500)
-    })
+  })
+
+  Promise.all(promises)
+    .then(() => es.status(200).json({result: 'done'}))
+    .catch((err) => res.status(500))
+
+  return res.status(200).json({success: 'done'})
 }
 
-exports.insertTimeSheet = insertTimeSheet
+exports.saveTimeSheets = saveTimeSheets
