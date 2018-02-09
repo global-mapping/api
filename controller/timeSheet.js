@@ -1,35 +1,49 @@
 const TimeSheet = require('../models/timeSheet')
+const {getUserInfo} = require('./api')
 
 const getTimeSheets = (req, res, next) => {
-  TimeSheet.find()
-    .then((times) => {
-      return res.status(200).json(times)
+  const token = req.get('token')
+  getUserInfo(token)
+    .then(user => {
+      if (!user) res.status(500)
+      return TimeSheet.find({email: user.email})
     })
-    .catch(error => {
-      console.error(error)
-      return res.status(500)
-    })
+    .then((times) => res.status(200).json(times))
+    .catch(error => res.status(500))
 }
-
-exports.getTimeSheets = getTimeSheets
 
 const saveTimeSheets = (req, res, next) => {
   const timeSheets = req.body
   const token = req.get('token')
 
-  const promises = Object.keys(timeSheets).map((dayKey) => {
-    return TimeSheet.create({
-      email: '',
-      message: timeSheets[dayKey],
-      dayKey
+  getUserInfo(token)
+    .then(user => {
+      if (!user) res.status(500)
+
+      const promises = Object.keys(timeSheets).map((dayKey) => {
+        return TimeSheet.findOneAndUpdate(
+          {
+            email: user.email,
+            dayKey
+          },
+          {
+            email: user.email,
+            message: timeSheets[dayKey],
+            dayKey
+          },
+          {
+            upsert: true,
+            new: true,
+            setDefaultsOnInsert: true,
+          },
+        )
+      })
+
+      return Promise.all(promises)
     })
-  })
-
-  Promise.all(promises)
-    .then(() => es.status(200).json({result: 'done'}))
-    .catch((err) => res.status(500))
-
-  return res.status(200).json({success: 'done'})
+    .then(() => res.status(200).json({success: 'done'}))
+    .catch(err => res.status(500))
 }
 
+exports.getTimeSheets = getTimeSheets
 exports.saveTimeSheets = saveTimeSheets
