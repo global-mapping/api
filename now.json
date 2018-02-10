@@ -1,0 +1,5 @@
+{
+  "name": "global-api",
+  "alias": "global-api.now.sh",
+  "dotenv": ".env.production"
+}

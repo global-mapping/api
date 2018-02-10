@@ -25,12 +25,13 @@ mongoose.connection
 app.use(bodyParser.json())
 app.use(morgan('dev'))
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: ['http://localhost:3000', 'https://global-time-tracker.now.sh'],
   credentials: true,
 }))
 
 // routes
 app.get('/list', getTimeSheets)
+app.get('/test', (req, res) => res.json({test: 'cristian'}))
 app.post('/save', saveTimeSheets)
 
 // server
