@@ -6,7 +6,10 @@ const getTimeSheets = (req, res, next) => {
   getUserInfo(token)
     .then(user => {
       if (!user) res.status(500)
-      return TimeSheet.find({email: user.email})
+      return TimeSheet
+        .find({email: user.email})
+        .sort( { createdAt: -1 } )
+        .limit(50)
     })
     .then((times) => res.status(200).json(times))
     .catch(error => res.status(500))
