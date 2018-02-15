@@ -12,7 +12,7 @@ const getTimeSheets = (req, res, next) => {
         .limit(50)
     })
     .then((times) => res.status(200).json(times))
-    .catch(error => res.status(500))
+    .catch(error => res.status(500).send(error))
 }
 
 const saveTimeSheets = (req, res, next) => {
