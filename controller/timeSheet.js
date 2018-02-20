@@ -8,11 +8,11 @@ const getTimeSheets = (req, res, next) => {
       if (!user) res.status(500)
       return TimeSheet
         .find({email: user.email})
-        .sort( { createdAt: -1 } )
+        .sort({ createdAt: -1 })
         .limit(50)
     })
     .then((times) => res.status(200).json(times))
-    .catch(error => res.status(500).send(error))
+    .catch(e => res.status(500).send({error: e.message, stack: e.stack}))
 }
 
 const saveTimeSheets = (req, res, next) => {
@@ -45,8 +45,32 @@ const saveTimeSheets = (req, res, next) => {
       return Promise.all(promises)
     })
     .then(() => res.status(200).json({success: 'done'}))
-    .catch(err => res.status(500))
+    .catch(e => res.status(500).send({error: e.message, stack: e.stack}))
+}
+
+const reportByWeek = (req, res, next) => {
+  const token = req.get('token')
+  getUserInfo(token)
+    .then(user => {
+      if (!user) res.status(500).send({error: 'user not found'})
+      
+      return TimeSheet
+        .find() // todo: filter by role and permissions / filter by range date
+        .sort({ createdAt: -1 })
+    })
+    .then((times) => {
+      let result = {}
+      times.forEach(t => {
+        if (!result[t.email]) {
+          result[t.email] = []
+        }
+        result[t.email].push(t)
+      })
+      res.status(200).json(result)
+    })
+    .catch(e => res.status(500).send({error: e.message, stack: e.stack}))
 }
 
 exports.getTimeSheets = getTimeSheets
 exports.saveTimeSheets = saveTimeSheets
+exports.reportByWeek = reportByWeek
