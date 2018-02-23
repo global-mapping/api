@@ -32,7 +32,7 @@ app.use(cors({
 // routes
 app.get('/list', getTimeSheets)
 app.post('/save', saveTimeSheets)
-app.get('/reportByWeek', reportByWeek)
+app.get('/reportByWeek/:startDate', reportByWeek)
 app.get('/test', (req, res) => res.json({test: 'cristian'}))
 
 // server

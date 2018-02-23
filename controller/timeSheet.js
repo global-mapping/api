@@ -1,5 +1,6 @@
 const TimeSheet = require('../models/timeSheet')
 const {getUserInfo} = require('./api')
+const moment = require('moment')
 
 const getTimeSheets = (req, res, next) => {
   const token = req.get('token')
@@ -50,12 +51,23 @@ const saveTimeSheets = (req, res, next) => {
 
 const reportByWeek = (req, res, next) => {
   const token = req.get('token')
+  const start = moment(req.params.startDate, 'YYYY-MM-DD')
+  const startKey = getDateKey(start)
+  const numDays = [1,2,3,4,5,6,7]
+  let curr = moment(start)
+
+  const dateKeys = numDays.map(n => {
+    curr.add(1, 'day')
+    return getDateKey(curr)
+  })
+
   getUserInfo(token)
     .then(user => {
       if (!user) res.status(500).send({error: 'user not found'})
       
+      // todo: filter by role and permissions
       return TimeSheet
-        .find() // todo: filter by role and permissions / filter by range date
+        .find({ dayKey: { $in: dateKeys } })
         .sort({ createdAt: -1 })
     })
     .then((times) => {
@@ -70,6 +82,8 @@ const reportByWeek = (req, res, next) => {
     })
     .catch(e => res.status(500).send({error: e.message, stack: e.stack}))
 }
+
+getDateKey = date => `${date.year()}-${date.month() + 1}-${date.date()}`
 
 exports.getTimeSheets = getTimeSheets
 exports.saveTimeSheets = saveTimeSheets
