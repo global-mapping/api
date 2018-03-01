@@ -19,10 +19,15 @@ const getTimeSheets = (req, res, next) => {
 }
 
 const saveTimeSheets = (req, res, next) => {
-  const timeSheets = req.body
+  const {timeSheets, userId} = req.body
   const token = req.get('token')
 
   getUserInfo(token)
+    .then(user => {
+      if (!user) return res.status(500)
+
+      return User.findById(userId)
+    })
     .then(user => {
       if (!user) return res.status(500)
 
@@ -35,6 +40,7 @@ const saveTimeSheets = (req, res, next) => {
           {
             email: user.email,
             message: timeSheets[dayKey],
+            user,
             dayKey
           },
           {
