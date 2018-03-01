@@ -5,7 +5,12 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
-const {getTimeSheets, saveTimeSheets, reportByWeek} = require('./controller/timeSheet')
+const {
+  getTimeSheets, 
+  saveTimeSheets, 
+  reportByWeek, 
+  updateCreateUser,
+} = require('./controller/timeSheet')
 
 const app = express()
 
@@ -32,6 +37,7 @@ app.use(cors({
 // routes
 app.get('/list', getTimeSheets)
 app.post('/save', saveTimeSheets)
+app.post('/updateCreateUser', updateCreateUser)
 app.get('/reportByWeek/:startDate', reportByWeek)
 app.get('/test', (req, res) => res.json({test: 'cristian'}))
 
