@@ -68,7 +68,7 @@ const reportByWeek = (req, res, next) => {
     curr.add(1, 'day')
     return getDateKey(curr)
   })
-
+  let report = {}
   getUserInfo(token)
     .then(user => {
       if (!user) return res.status(500).send({error: 'user not found'})
@@ -79,14 +79,16 @@ const reportByWeek = (req, res, next) => {
         .sort({ createdAt: -1 })
     })
     .then((times) => {
-      let result = {}
       times.forEach(t => {
-        if (!result[t.email]) {
-          result[t.email] = []
+        if (!report[t.email]) {
+          report[t.email] = []
         }
-        result[t.email].push(t)
+        report[t.email].push(t)
       })
-      res.status(200).json(result)
+      return User.find()
+    })
+    .then(users => {
+      res.status(200).json({users, report})
     })
     .catch(e => res.status(500).send({error: e.message, stack: e.stack}))
 }
