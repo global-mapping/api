@@ -18,6 +18,19 @@ const getTimeSheets = (req, res, next) => {
     .catch(e => res.status(500).send({error: e.message, stack: e.stack}))
 }
 
+const updateUserProfile = (req, res, next) => {
+  const userUpdated = req.body
+  const token = req.get('token')
+
+  User.findByIdAndUpdate(userUpdated._id, {
+    role: userUpdated.role,
+    area: userUpdated.area,
+  })
+  .then(() => User.find())
+  .then(users => res.status(200).json(users))
+  .catch(e => res.status(500).send({error: e.message, stack: e.stack}))
+}
+
 const saveTimeSheets = (req, res, next) => {
   const {timeSheets, userId} = req.body
   const token = req.get('token')
@@ -128,7 +141,23 @@ const updateCreateUser = (req, res, next) => {
 
 getDateKey = date => `${date.year()}-${date.month() + 1}-${date.date()}`
 
+const getUsers = (req, res, next) => {
+  const token = req.get('token')
+  getUserInfo(token) // TODO: check super admin only
+    .then(user => {
+      if (!user) return res.status(500)
+      return User.find()
+    })
+    .then(users => res.status(200).json(users))
+    .catch((err) => {
+      console.error(err)
+      return res.status(500)
+    })
+}
+
+exports.getUsers = getUsers
 exports.getTimeSheets = getTimeSheets
 exports.saveTimeSheets = saveTimeSheets
 exports.reportByWeek = reportByWeek
 exports.updateCreateUser = updateCreateUser
+exports.updateUserProfile = updateUserProfile

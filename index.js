@@ -10,6 +10,8 @@ const {
   saveTimeSheets, 
   reportByWeek, 
   updateCreateUser,
+  getUsers,
+  updateUserProfile,
 } = require('./controller/timeSheet')
 
 const app = express()
@@ -36,7 +38,9 @@ app.use(cors({
 
 // routes
 app.get('/list', getTimeSheets)
+app.get('/getUsers', getUsers)
 app.post('/save', saveTimeSheets)
+app.post('/updateUserProfile', updateUserProfile)
 app.post('/updateCreateUser', updateCreateUser)
 app.get('/reportByWeek/:startDate', reportByWeek)
 app.get('/test', (req, res) => res.json({test: 'cristian'}))
