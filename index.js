@@ -12,6 +12,7 @@ const {
   updateCreateUser,
   getUsers,
   updateUserProfile,
+  me,
 } = require('./controller/timeSheet')
 
 const app = express()
@@ -39,6 +40,7 @@ app.use(cors({
 // routes
 app.get('/list', getTimeSheets)
 app.get('/getUsers', getUsers)
+app.get('/me', me)
 app.post('/save', saveTimeSheets)
 app.post('/updateUserProfile', updateUserProfile)
 app.post('/updateCreateUser', updateCreateUser)

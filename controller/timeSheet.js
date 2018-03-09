@@ -82,21 +82,32 @@ const reportByWeek = (req, res, next) => {
     return getDateKey(curr)
   })
   let report = {}
+  let userTmp = {}
+
   getUserInfo(token)
     .then(user => {
       if (!user) return res.status(500).send({error: 'user not found'})
       
-      // todo: filter by role and permissions
+      return User.findOne({email: user.email})
+    })
+    .then(user => {
+      if (!user) return res.status(500).send({error: 'user not found'})
+      if (user.role !== 'ADMIN') return res.status(200).json({})
+
+      userTmp = user
       return TimeSheet
         .find({ dayKey: { $in: dateKeys } })
+        .populate('user')
         .sort({ createdAt: -1 })
     })
     .then((times) => {
       times.forEach(t => {
-        if (!report[t.email]) {
-          report[t.email] = []
+        if (userTmp.area === 'ALL_REPORTS' || (t.user && userTmp.area === t.user.area)) {
+          if (!report[t.email]) {
+            report[t.email] = []
+          }
+          report[t.email].push(t)
         }
-        report[t.email].push(t)
       })
       return User.find()
     })
@@ -146,7 +157,14 @@ const getUsers = (req, res, next) => {
   getUserInfo(token) // TODO: check super admin only
     .then(user => {
       if (!user) return res.status(500)
-      return User.find()
+      return User.findOne({email: user.email})
+    })
+    .then(user => {
+      if (!user) return res.status(500)
+      if (user.role === 'ADMIN' && user.area === 'ALL_REPORTS') {
+        return User.find()
+      }
+      return res.status(200).json([])
     })
     .then(users => res.status(200).json(users))
     .catch((err) => {
@@ -155,6 +173,24 @@ const getUsers = (req, res, next) => {
     })
 }
 
+const me = (req, res, next) => {
+  const token = req.get('token')
+  getUserInfo(token)
+    .then(user => {
+      if (!user) return res.status(500)
+      return User.findOne({email: user.email})
+    })
+    .then(user => {
+      if (!user) return res.status(500)
+      res.status(200).json(user)
+    })
+    .catch((err) => {
+      console.error(err)
+      return res.status(500)
+    })
+}
+
+exports.me = me
 exports.getUsers = getUsers
 exports.getTimeSheets = getTimeSheets
 exports.saveTimeSheets = saveTimeSheets
