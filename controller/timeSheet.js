@@ -7,7 +7,7 @@ const getTimeSheets = (req, res, next) => {
   const token = req.get('token')
   getUserInfo(token)
     .then(user => {
-      if (!user) return res.status(500)
+      if (!user) res.status(500)
 
       return TimeSheet
         .find({email: user.email})
@@ -37,12 +37,12 @@ const saveTimeSheets = (req, res, next) => {
 
   getUserInfo(token)
     .then(user => {
-      if (!user) return res.status(500)
+      if (!user) res.status(500)
 
       return User.findById(userId)
     })
     .then(user => {
-      if (!user) return res.status(500)
+      if (!user) res.status(500)
 
       const promises = Object.keys(timeSheets).map((dayKey) => {
         return TimeSheet.findOneAndUpdate(
@@ -66,7 +66,7 @@ const saveTimeSheets = (req, res, next) => {
 
       return Promise.all(promises)
     })
-    .then(() => res.status(200).json({success: 'done'}))
+    .then((results) => res.status(200).json({success: 'done'}))
     .catch(e => res.status(500).send({error: e.message, stack: e.stack}))
 }
 
@@ -86,12 +86,12 @@ const reportByWeek = (req, res, next) => {
 
   getUserInfo(token)
     .then(user => {
-      if (!user) return res.status(500).send({error: 'user not found'})
+      if (!user) res.status(500).send({error: 'user not found'})
       
       return User.findOne({email: user.email})
     })
     .then(user => {
-      if (!user) return res.status(500).send({error: 'user not found'})
+      if (!user) res.status(500).send({error: 'user not found'})
       if (user.role !== 'ADMIN') return res.status(200).json({})
 
       userTmp = user
@@ -122,7 +122,7 @@ const updateCreateUser = (req, res, next) => {
 
   getUserInfo(token)
     .then(user => {
-      if (!user) return res.status(500)
+      if (!user) res.status(500)
 
       return User.findOneAndUpdate(
         {
@@ -146,7 +146,7 @@ const updateCreateUser = (req, res, next) => {
     })
     .catch((err) => {
       console.error(err)
-      return res.status(500)
+      res.status(500)
     })
 }
 
@@ -156,11 +156,11 @@ const getUsers = (req, res, next) => {
   const token = req.get('token')
   getUserInfo(token) // TODO: check super admin only
     .then(user => {
-      if (!user) return res.status(500)
+      if (!user) res.status(500)
       return User.findOne({email: user.email})
     })
     .then(user => {
-      if (!user) return res.status(500)
+      if (!user) res.status(500)
       if (user.role === 'ADMIN' && user.area === 'ALL_REPORTS') {
         return User.find()
       }
@@ -169,7 +169,7 @@ const getUsers = (req, res, next) => {
     .then(users => res.status(200).json(users))
     .catch((err) => {
       console.error(err)
-      return res.status(500)
+      res.status(500)
     })
 }
 
@@ -177,16 +177,16 @@ const me = (req, res, next) => {
   const token = req.get('token')
   getUserInfo(token)
     .then(user => {
-      if (!user) return res.status(500)
+      if (!user) res.status(500)
       return User.findOne({email: user.email})
     })
     .then(user => {
-      if (!user) return res.status(500)
+      if (!user) res.status(500)
       res.status(200).json(user)
     })
     .catch((err) => {
       console.error(err)
-      return res.status(500)
+      res.status(500)
     })
 }
 
