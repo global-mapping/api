@@ -1,6 +1,6 @@
 const TimeSheet = require('../models/timeSheet')
 const User = require('../models/user')
-const {getUserInfo, getUserByEmail} = require('./api')
+const {getUserInfo} = require('./api')
 const moment = require('moment')
 
 const getTimeSheets = (req, res, next) => {
@@ -20,15 +20,14 @@ const getTimeSheets = (req, res, next) => {
 
 const updateUserProfile = (req, res, next) => {
   const userUpdated = req.body
-  const token = req.get('token')
 
   User.findByIdAndUpdate(userUpdated._id, {
     role: userUpdated.role,
-    area: userUpdated.area,
+    area: userUpdated.area
   })
-  .then(() => User.find())
-  .then(users => res.status(200).json(users))
-  .catch(e => res.status(500).send({error: e.message, stack: e.stack}))
+    .then(() => User.find())
+    .then(users => res.status(200).json(users))
+    .catch(e => res.status(500).send({error: e.message, stack: e.stack}))
 }
 
 const saveTimeSheets = (req, res, next) => {
@@ -59,8 +58,8 @@ const saveTimeSheets = (req, res, next) => {
           {
             upsert: true,
             new: true,
-            setDefaultsOnInsert: true,
-          },
+            setDefaultsOnInsert: true
+          }
         )
       })
 
@@ -73,8 +72,7 @@ const saveTimeSheets = (req, res, next) => {
 const reportByWeek = (req, res, next) => {
   const token = req.get('token')
   const start = moment(req.params.startDate, 'YYYY-MM-DD')
-  const startKey = getDateKey(start)
-  const numDays = [1,2,3,4,5,6,7]
+  const numDays = [1, 2, 3, 4, 5, 6, 7]
   let curr = moment(start)
 
   const dateKeys = numDays.map(n => {
@@ -87,7 +85,6 @@ const reportByWeek = (req, res, next) => {
   getUserInfo(token)
     .then(user => {
       if (!user) res.status(500).send({error: 'user not found'})
-      
       return User.findOne({email: user.email})
     })
     .then(user => {
@@ -126,7 +123,7 @@ const updateCreateUser = (req, res, next) => {
 
       return User.findOneAndUpdate(
         {
-          email: user.email,
+          email: user.email
         },
         {
           email: user.email,
@@ -137,8 +134,8 @@ const updateCreateUser = (req, res, next) => {
         {
           upsert: true,
           new: true,
-          setDefaultsOnInsert: true,
-        },
+          setDefaultsOnInsert: true
+        }
       )
     })
     .then(user => {
@@ -150,7 +147,7 @@ const updateCreateUser = (req, res, next) => {
     })
 }
 
-getDateKey = date => `${date.year()}-${date.month() + 1}-${date.date()}`
+const getDateKey = date => `${date.year()}-${date.month() + 1}-${date.date()}`
 
 const getUsers = (req, res, next) => {
   const token = req.get('token')

@@ -9,10 +9,10 @@ const TimeSheetSchema = new Schema(
     dayKey: { type: String },
     user: {
       type: Schema.Types.ObjectId,
-      ref: 'user',
+      ref: 'user'
     }
   },
-  { timestamps: true },
+  { timestamps: true }
 )
 
 module.exports = mongoose.model('timeSheet', TimeSheetSchema)

@@ -9,9 +9,9 @@ const UserSchema = new Schema(
     nickname: { type: String },
     picture: { type: String },
     role: { type: String },
-    area: { type: String },
+    area: { type: String }
   },
-  { timestamps: true },
+  { timestamps: true }
 )
 
 module.exports = mongoose.model('user', UserSchema)

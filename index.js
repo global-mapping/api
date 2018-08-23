@@ -6,13 +6,13 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
 const {
-  getTimeSheets, 
-  saveTimeSheets, 
-  reportByWeek, 
+  getTimeSheets,
+  saveTimeSheets,
+  reportByWeek,
   updateCreateUser,
   getUsers,
   updateUserProfile,
-  me,
+  me
 } = require('./controller/timeSheet')
 
 const app = express()
@@ -22,9 +22,14 @@ const MONGO_URI = process.env.MONGO_DB_URL || 'mongodb://localhost/timetracker'
 if (!MONGO_URI) {
   throw new Error('You must provide a Mongo URI')
 }
-
+const mongoOptions = {
+  socketTimeoutMS: 30000,
+  reconnectTries: Number.MAX_VALUE,
+  reconnectInterval: 1000,
+  keepAlive: 1
+}
 mongoose.Promise = global.Promise
-mongoose.connect(MONGO_URI)
+mongoose.connect(MONGO_URI, mongoOptions)
 mongoose.connection
   .once('open', () => console.log('Connected to Mongo instance.'))
   .on('error', error => console.error('Error connecting to Mongo:', error))
@@ -34,7 +39,7 @@ app.use(bodyParser.json())
 app.use(morgan('dev'))
 app.use(cors({
   origin: ['http://localhost:3000', 'https://global-time-tracker.now.sh'],
-  credentials: true,
+  credentials: true
 }))
 
 // routes

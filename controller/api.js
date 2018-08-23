@@ -8,9 +8,9 @@ exports.getUserInfo = (token) => {
     method: 'get',
     headers: {
       Authorization: `Bearer ${token}`
-    },
+    }
   })
-  .then(({ data: user }) => user)
+    .then(({ data: user }) => user)
 }
 
 exports.getUserByEmail = (email) => {
@@ -19,10 +19,10 @@ exports.getUserByEmail = (email) => {
     method: 'get',
     headers: {
       Authorization: `Bearer ${API_TOKEN}`
-    },
+    }
   })
-  .then(({ data: user }) => user)
-  .catch(error => {
-    console.error(error)
-  })
+    .then(({ data: user }) => user)
+    .catch(error => {
+      console.error(error)
+    })
 }
