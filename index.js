@@ -12,7 +12,7 @@ const {
   updateCreateUser,
   getUsers,
   updateUserProfile,
-  me
+  me,
 } = require('./controller/timeSheet')
 
 const app = express()
@@ -26,7 +26,7 @@ const mongoOptions = {
   socketTimeoutMS: 30000,
   reconnectTries: Number.MAX_VALUE,
   reconnectInterval: 1000,
-  keepAlive: 1
+  keepAlive: 1,
 }
 mongoose.Promise = global.Promise
 mongoose.connect(MONGO_URI, mongoOptions)
@@ -37,10 +37,12 @@ mongoose.connection
 // middlewares
 app.use(bodyParser.json())
 app.use(morgan('dev'))
-app.use(cors({
-  origin: ['http://localhost:3000', 'https://global-time-tracker.now.sh'],
-  credentials: true
-}))
+app.use(
+  cors({
+    origin: ['http://localhost:3000', 'https://global-time-tracker.now.sh'],
+    credentials: true,
+  }),
+)
 
 // routes
 app.get('/list', getTimeSheets)
@@ -50,7 +52,7 @@ app.post('/save', saveTimeSheets)
 app.post('/updateUserProfile', updateUserProfile)
 app.post('/updateCreateUser', updateCreateUser)
 app.get('/reportByWeek/:startDate', reportByWeek)
-app.get('/test', (req, res) => res.json({test: 'cristian'}))
+app.get('/test', (req, res) => res.json({ test: 'cristian 3' }))
 
 // server
 if (!module.parent) {
@@ -66,5 +68,4 @@ if (!module.parent) {
     }
   })
 }
-
 module.exports = app
