@@ -83,11 +83,11 @@ const reportByWeek = (req, res, next) => {
 
   getUserInfo(token)
     .then(user => {
-      if (!user) res.status(500).send({ error: 'user not found' })
+      if (!user) res.status(505).send({ error: 'user not found' })
       return User.findOne({ email: user.email })
     })
     .then(user => {
-      if (!user) res.status(500).send({ error: 'user not found' })
+      if (!user) res.status(506).send({ error: 'user not found' })
       if (user.role !== 'ADMIN') return res.status(200).json({})
 
       userTmp = user
@@ -97,7 +97,7 @@ const reportByWeek = (req, res, next) => {
     })
     .then(times => {
       times.forEach(t => {
-        if (userTmp.area === 'ALL_REPORTS' || (t.user && userTmp.area === t.user.area)) {
+        if (userTmp.area === 'TODAS_LAS_AREAS' || (t.user && userTmp.area === t.user.area)) {
           if (!report[t.email]) {
             report[t.email] = []
           }
@@ -109,7 +109,7 @@ const reportByWeek = (req, res, next) => {
     .then(users => {
       res.status(200).json({ users, report })
     })
-    .catch(e => res.status(500).send({ error: e.message, stack: e.stack }))
+    .catch(e => res.status(507).send({ error: e.message, stack: e.stack }))
 }
 
 const updateCreateUser = (req, res, next) => {
@@ -157,7 +157,7 @@ const getUsers = (req, res, next) => {
     })
     .then(user => {
       if (!user) res.status(500)
-      if (user.role === 'ADMIN' && user.area === 'ALL_REPORTS') {
+      if (user.role === 'ADMIN' && user.area === 'TODAS_LAS_AREAS') {
         return User.find()
       }
       return res.status(200).json([])
