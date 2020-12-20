@@ -61,7 +61,7 @@ if (!module.parent) {
       console.error('Cannot run')
     } else {
       console.log(`
-        TimeTracker API is working 🍺
+        TimeTracker API V2 is working 🍺
         App listen on port: ${process.env.PORT} 🍕
         Env: ${process.env.NODE_ENV} 🦄
       `)
