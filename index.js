@@ -39,7 +39,7 @@ app.use(bodyParser.json())
 app.use(morgan('dev'))
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'https://global-time-tracker.now.sh'],
+    origin: ['http://localhost:3000', 'https://global-time-tracker.now.sh', 'https://global-time-tracker.cpenarrieta.vercel.app'],
     credentials: true,
   }),
 )
@@ -52,7 +52,7 @@ app.post('/save', saveTimeSheets)
 app.post('/updateUserProfile', updateUserProfile)
 app.post('/updateCreateUser', updateCreateUser)
 app.get('/reportByWeek/:startDate', reportByWeek)
-app.get('/test', (req, res) => res.json({ test: 'cristian 3' }))
+app.get('/test', (req, res) => res.json({ test: 'cristian 6' }))
 
 // server
 if (!module.parent) {
